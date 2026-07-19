@@ -45,10 +45,11 @@ path = sys.argv[1]
 with open(path) as f: m = json.load(f)
 deps = m.setdefault("dependencies", {})
 wanted = {
-    "com.unity.cinemachine":  "3.1.2",   # Cinemachine 3.x — camera rigs (Phase 4)
-    "com.unity.timeline":     "1.8.7",   # sequence playback
-    "com.unity.addressables": "2.3.1",   # faction/arena content delivery (Phase 12)
-    "com.unity.inputsystem":  "1.11.2",  # new Input System (Active Input Handling)
+    "com.unity.cinemachine":       "3.1.2",  # Cinemachine 3.x — camera rigs (Phase 4)
+    "com.unity.timeline":          "1.8.7",  # sequence playback
+    "com.unity.addressables":      "2.3.1",  # faction/arena content delivery (Phase 12)
+    "com.unity.inputsystem":       "1.11.2", # new Input System (Active Input Handling)
+    "com.unity.animation.rigging": "1.3.0",  # runtime IK: idle intelligence + attack motion-warping (Phase 3/7)
     # com.unity.test-framework and URP are already added by the URP template.
 }
 for pkg, ver in wanted.items():
