@@ -1,0 +1,21 @@
+{
+    "name": "Presentation",
+    "rootNamespace": "CheckmateRoyale.Presentation",
+    "references": [
+        "ChessCore",
+        "Director",
+        "Unity.Cinemachine",
+        "Unity.Timeline",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

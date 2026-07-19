@@ -1,0 +1,16 @@
+{
+    "name": "Director",
+    "rootNamespace": "CheckmateRoyale.Director",
+    "references": [
+        "ChessCore"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

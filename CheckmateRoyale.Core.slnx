@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/build/">
+    <Project Path="build/ChessCore/ChessCore.csproj" />
+    <Project Path="build/Director/Director.csproj" />
+    <Project Path="build/Tests.EditMode/Tests.EditMode.csproj" />
+  </Folder>
+</Solution>

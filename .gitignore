@@ -1,0 +1,34 @@
+# ---- Unity ----
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/[Ll]ogs/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+/[Aa]ssets/AssetStoreTools*
+/[Aa]ssets/Plugins/Editor/JetBrains*
+.vs/
+.vsconfig
+.gradle/
+ExportedObj/
+*.apk
+*.aab
+*.unitypackage
+*.app
+crashlytics-build.properties
+sysinfo.txt
+
+# ---- .NET build harness (Unity ignores build/, but keep artifacts out of git) ----
+build/**/bin/
+build/**/obj/
+Tools/**/bin/
+Tools/**/obj/
+*.user
+
+# ---- OS / editor ----
+.DS_Store
+.idea/
+*.swp

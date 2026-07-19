@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Standalone .NET build of the pure-C# ChessCore. Unity ignores build/ and
+       compiles the same source via ChessCore.asmdef. Keep this engine-agnostic. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>ChessCore</AssemblyName>
+    <RootNamespace>CheckmateRoyale.ChessCore</RootNamespace>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../../Assets/Scripts/ChessCore/**/*.cs" />
+  </ItemGroup>
+
+</Project>
