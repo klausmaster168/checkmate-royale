@@ -38,3 +38,4 @@ unity-*.log
 test-results.xml
 UserSettings/
 playmode-results.xml
+Tools/*.png

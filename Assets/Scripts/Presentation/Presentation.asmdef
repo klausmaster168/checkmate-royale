@@ -4,7 +4,7 @@
     "references": [
         "ChessCore",
         "Director",
-        "Unity.Timeline"
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
