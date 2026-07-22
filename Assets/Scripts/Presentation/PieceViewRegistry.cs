@@ -14,11 +14,15 @@ namespace CheckmateRoyale.Presentation
         private readonly PieceView[] _atSquare = new PieceView[64];
         private readonly BoardView _board;
         private readonly Transform _parent;
+        private readonly FactionArt _whiteArt;
+        private readonly FactionArt _blackArt;
 
-        public PieceViewRegistry(BoardView board, Transform parent)
+        public PieceViewRegistry(BoardView board, Transform parent, FactionArt whiteArt = null, FactionArt blackArt = null)
         {
             _board = board;
             _parent = parent;
+            _whiteArt = whiteArt;
+            _blackArt = blackArt;
         }
 
         public BoardView Board => _board;
@@ -123,9 +127,20 @@ namespace CheckmateRoyale.Presentation
 
         private PieceView CreateView(int id, CC.PieceType type, CC.Color side, int square)
         {
-            Color team = side == CC.Color.White ? PlaceholderArt.SteelArmy : PlaceholderArt.ObsidianArmy;
-            GameObject go = PlaceholderArt.CreatePiece(type, team, $"{side}_{type}_{id}");
-            go.transform.SetParent(_parent, false);
+            FactionArt art = side == CC.Color.White ? _whiteArt : _blackArt;
+            GameObject prefab = art != null ? art.PrefabFor(type) : null;
+            GameObject go;
+
+            if (prefab != null)
+            {
+                go = BuildFromPrefab(prefab, type, art, $"{side}_{type}_{id}");
+            }
+            else
+            {
+                Color team = side == CC.Color.White ? PlaceholderArt.SteelArmy : PlaceholderArt.ObsidianArmy;
+                go = PlaceholderArt.CreatePiece(type, team, $"{side}_{type}_{id}");
+                go.transform.SetParent(_parent, false);
+            }
 
             var view = go.AddComponent<PieceView>();
             view.PieceId = id;
@@ -135,6 +150,43 @@ namespace CheckmateRoyale.Presentation
             view.BaseScale = go.transform.localScale;
             view.SnapTo(_board.SquareToWorld(square));
             return view;
+        }
+
+        // Instantiate a faction prefab into a wrapper, auto-fit to the piece height, centre it
+        // (so the center-pivot SnapTo convention holds for any model pivot), collide + tint.
+        private GameObject BuildFromPrefab(GameObject prefab, CC.PieceType type, FactionArt art, string name)
+        {
+            var wrapper = new GameObject(name);
+            wrapper.transform.SetParent(_parent, false);
+
+            GameObject model = Object.Instantiate(prefab);
+            model.transform.SetParent(wrapper.transform, false);
+
+            float targetH = PlaceholderArt.Height(type);
+            var rends = model.GetComponentsInChildren<Renderer>();
+            if (rends.Length > 0)
+            {
+                Bounds b = rends[0].bounds;
+                for (int i = 1; i < rends.Length; i++) b.Encapsulate(rends[i].bounds);
+                float h = b.size.y > 1e-4f ? b.size.y : 1f;
+                model.transform.localScale *= targetH / h;
+
+                b = rends[0].bounds;
+                for (int i = 1; i < rends.Length; i++) b.Encapsulate(rends[i].bounds);
+                model.transform.position -= b.center - wrapper.transform.position; // centre bounds on wrapper origin
+
+                if (art.ApplyTint)
+                    foreach (var r in model.GetComponentsInChildren<Renderer>())
+                    {
+                        var m = r.material; // instance
+                        m.color = art.TeamTint;
+                        if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", art.TeamTint);
+                    }
+            }
+
+            var col = wrapper.AddComponent<BoxCollider>();
+            col.size = new Vector3(0.6f, targetH, 0.6f);
+            return wrapper;
         }
 
         public void Clear()

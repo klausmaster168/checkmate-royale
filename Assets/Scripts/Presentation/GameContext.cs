@@ -30,6 +30,12 @@ namespace CheckmateRoyale.Presentation
     {
         [SerializeField] private ulong _directorSeed = 0xC5EED12345678UL;
         [SerializeField] private string _startFen = null; // null/empty => standard start position
+        [Header("Optional faction art (null => primitive placeholders)")]
+        [SerializeField] private FactionArt _whiteArt;
+        [SerializeField] private FactionArt _blackArt;
+
+        public FactionArt WhiteArt { get => _whiteArt; set => _whiteArt = value; }
+        public FactionArt BlackArt { get => _blackArt; set => _blackArt = value; }
 
         public ulong Seed => _directorSeed;
         public string StartFen { get => _startFen; set => _startFen = value; }
@@ -71,7 +77,7 @@ namespace CheckmateRoyale.Presentation
 
             var piecesGo = new GameObject("Pieces");
             piecesGo.transform.SetParent(transform, false);
-            Pieces = new PieceViewRegistry(Board, piecesGo.transform);
+            Pieces = new PieceViewRegistry(Board, piecesGo.transform, _whiteArt, _blackArt);
             Pieces.SpawnFromPosition(Game.Position);
 
             var playerGo = new GameObject("SequencePlayer");
