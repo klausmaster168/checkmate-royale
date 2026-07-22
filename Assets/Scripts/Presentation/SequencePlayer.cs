@@ -20,6 +20,7 @@ namespace CheckmateRoyale.Presentation
 
         public event Action<BeatType, int> BeatStarted;
         public event Action SequenceSkipped;
+        public event Action<Vector3, int> CaptureImpact; // world pos + VFX tier, fired when a capture lands
 
         private PieceViewRegistry _registry;
 
@@ -30,6 +31,7 @@ namespace CheckmateRoyale.Presentation
         private MoveCommitted _cur;
         private float _elapsed, _realDuration, _impactAt;
         private int _beatIndex;
+        private int _curTier;
         private float[] _beatStartReal;
         private bool _capturedHandled;
         private Vector3 _moverStart, _moverEnd, _rookStart, _rookEnd;
@@ -77,12 +79,14 @@ namespace CheckmateRoyale.Presentation
             _beatStartReal = new float[beats.Length];
             float real = 0f;
             float impact = -1f;
+            _curTier = 0;
             for (int i = 0; i < beats.Length; i++)
             {
                 _beatStartReal[i] = real;
                 float slow = Mathf.Max(beats[i].SlowMoFactor, 0.05f);
                 if (impact < 0f && (beats[i].Type == BeatType.Impact || beats[i].Type == BeatType.Finisher))
                     impact = real;
+                if (beats[i].VfxTier > _curTier) _curTier = beats[i].VfxTier;
                 real += beats[i].Duration / slow; // slow-mo stretches real playback time
             }
             _realDuration = Mathf.Max(real, 0.0001f);
@@ -185,6 +189,7 @@ namespace CheckmateRoyale.Presentation
         private void BeginDeath(PieceView view)
         {
             if (view == null) return;
+            CaptureImpact?.Invoke(view.transform.position, _curTier);
             _dying.Add(new Dying { View = view, T = 0f, Dur = 0.4f, StartScale = view.transform.localScale });
         }
 

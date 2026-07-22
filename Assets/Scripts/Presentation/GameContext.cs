@@ -35,6 +35,8 @@ namespace CheckmateRoyale.Presentation
         public BoardView Board { get; private set; }
         public PieceViewRegistry Pieces { get; private set; }
         public SequencePlayer Player { get; private set; }
+        public VFXSpawner Vfx { get; private set; }
+        public BattleScars Scars { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -67,6 +69,22 @@ namespace CheckmateRoyale.Presentation
             playerGo.transform.SetParent(transform, false);
             Player = playerGo.AddComponent<SequencePlayer>();
             Player.Init(Pieces);
+
+            var fxGo = new GameObject("Battlefield");
+            fxGo.transform.SetParent(transform, false);
+            Vfx = fxGo.AddComponent<VFXSpawner>();
+            Scars = fxGo.AddComponent<BattleScars>();
+            Scars.Init(Board);
+            Vfx.Prewarm(16);
+            Scars.Prewarm(8);
+
+            Player.CaptureImpact += OnCaptureImpact;
+        }
+
+        private void OnCaptureImpact(Vector3 worldPos, int tier)
+        {
+            Vfx.Burst(worldPos, tier);
+            Scars.AddScar(Board.WorldToSquare(worldPos), tier);
         }
 
         public ModeDial Dial
@@ -127,6 +145,7 @@ namespace CheckmateRoyale.Presentation
             Memory.Init(Game.Position);
             Director = new BattleDirector(_directorSeed, Director?.Dial ?? ModeDial.Cinema);
             Pieces.SpawnFromPosition(Game.Position);
+            Scars.Clear();
         }
     }
 }
