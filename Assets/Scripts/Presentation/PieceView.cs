@@ -10,12 +10,21 @@ namespace CheckmateRoyale.Presentation
         public CC.PieceType Type;
         public CC.Color Side;
         public int Square;
+        public Vector3 BaseScale = Vector3.one; // authored (un-squashed) local scale
 
         /// <summary>Place the piece standing on the given board-surface world point.</summary>
         public void SnapTo(Vector3 surfaceWorld)
         {
-            float halfHeight = PlaceholderArt.Height(Type) * 0.5f;
-            transform.position = surfaceWorld + new Vector3(0f, halfHeight, 0f);
+            transform.position = StandPosition(surfaceWorld);
         }
+
+        /// <summary>World position where this piece should stand on a given surface point.</summary>
+        public Vector3 StandPosition(Vector3 surfaceWorld)
+        {
+            return surfaceWorld + new Vector3(0f, PlaceholderArt.Height(Type) * 0.5f, 0f);
+        }
+
+        /// <summary>World position where this piece should stand for its current logical square.</summary>
+        public Vector3 StandWorld(BoardView board) => StandPosition(board.SquareToWorld(Square));
     }
 }
