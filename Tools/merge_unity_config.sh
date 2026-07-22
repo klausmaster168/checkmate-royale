@@ -44,14 +44,11 @@ import json, sys
 path = sys.argv[1]
 with open(path) as f: m = json.load(f)
 deps = m.setdefault("dependencies", {})
-wanted = {
-    "com.unity.cinemachine":       "3.1.2",  # Cinemachine 3.x — camera rigs (Phase 4)
-    "com.unity.timeline":          "1.8.7",  # sequence playback
-    "com.unity.addressables":      "2.3.1",  # faction/arena content delivery (Phase 12)
-    "com.unity.inputsystem":       "1.11.2", # new Input System (Active Input Handling)
-    "com.unity.animation.rigging": "1.3.0",  # runtime IK: idle intelligence + attack motion-warping (Phase 3/7)
-    # com.unity.test-framework and URP are already added by the URP template.
-}
+# The URP template already provides timeline, test-framework, inputsystem and URP.
+# Cinemachine (Phase 4), Animation Rigging (Phase 3/7) and Addressables (Phase 12) are
+# added later via Package Manager at versions matching the installed editor — pinning old
+# versions here broke compilation on Unity 6000.5 (GetInstanceID became a hard error).
+wanted = {}
 for pkg, ver in wanted.items():
     deps.setdefault(pkg, ver)
 with open(path, "w") as f:

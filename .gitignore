@@ -32,3 +32,8 @@ Tools/**/obj/
 .DS_Store
 .idea/
 *.swp
+
+# Unity batch-mode artifacts
+unity-*.log
+test-results.xml
+UserSettings/
