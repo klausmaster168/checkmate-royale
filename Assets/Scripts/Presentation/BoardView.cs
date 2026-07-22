@@ -21,6 +21,16 @@ namespace CheckmateRoyale.Presentation
             return transform.position + new Vector3(x, 0f, z);
         }
 
+        /// <summary>Nearest square to a world point, or -1 if it falls outside the board.</summary>
+        public int WorldToSquare(Vector3 world)
+        {
+            Vector3 local = world - transform.position;
+            int file = Mathf.RoundToInt(local.x / SquareSize + Offset);
+            int rank = Mathf.RoundToInt(local.z / SquareSize + Offset);
+            if (file < 0 || file > 7 || rank < 0 || rank > 7) return -1;
+            return SquareOf(file, rank);
+        }
+
         public void Build()
         {
             if (_built) return;
