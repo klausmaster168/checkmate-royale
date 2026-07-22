@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using CheckmateRoyale.ChessCore;
 using CheckmateRoyale.Director;
+using CheckmateRoyale.Presentation.Cameras;
 
 namespace CheckmateRoyale.Presentation
 {
@@ -37,6 +38,7 @@ namespace CheckmateRoyale.Presentation
         public SequencePlayer Player { get; private set; }
         public VFXSpawner Vfx { get; private set; }
         public BattleScars Scars { get; private set; }
+        public CameraDirector Cameras { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -79,6 +81,11 @@ namespace CheckmateRoyale.Presentation
             Scars.Prewarm(8);
 
             Player.CaptureImpact += OnCaptureImpact;
+
+            var camGo = new GameObject("CameraDirector");
+            camGo.transform.SetParent(transform, false);
+            Cameras = camGo.AddComponent<CameraDirector>();
+            Cameras.Init(Camera.main, Pieces, Board, Player); // inert if there is no main camera
         }
 
         private void OnCaptureImpact(Vector3 worldPos, int tier)

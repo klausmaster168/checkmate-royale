@@ -37,6 +37,8 @@ namespace CheckmateRoyale.Presentation
         private Vector3 _moverStart, _moverEnd, _rookStart, _rookEnd;
 
         public bool IsPlaying => _playing || _queue.Count > 0;
+        public bool HasCurrent => _playing;
+        public MoveCommitted CurrentMove => _cur;
 
         private struct Dying { public PieceView View; public float T, Dur; public Vector3 StartScale; }
 
@@ -44,11 +46,14 @@ namespace CheckmateRoyale.Presentation
 
         public void Enqueue(in MoveCommitted mc) => _queue.Enqueue(mc);
 
-        private void Update()
+        private void Update() => Tick(Time.deltaTime);
+
+        /// <summary>Advance playback by <paramref name="dt"/> seconds. Public so tests can drive time deterministically.</summary>
+        public void Tick(float dt)
         {
             try
             {
-                StepDying(Time.deltaTime);
+                StepDying(dt);
 
                 // Fast-forward if we're falling behind (premove / rapid play).
                 while (_queue.Count > MaxBacklog)
@@ -58,7 +63,7 @@ namespace CheckmateRoyale.Presentation
                 }
 
                 if (!_playing && _queue.Count > 0) StartNext();
-                if (_playing) Advance(Time.deltaTime);
+                if (_playing) Advance(dt);
             }
             catch (Exception e)
             {
