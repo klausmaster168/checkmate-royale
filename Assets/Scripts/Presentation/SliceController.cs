@@ -22,6 +22,8 @@ namespace CheckmateRoyale.Presentation
         {
             [Tooltip("Injected eval (cp, mover POV) before the move.")] public float EvalBefore = -600f;
             [Tooltip("Injected eval (cp, mover POV) after the move — big swing = max drama.")] public float EvalAfter = 600f;
+            [Tooltip("Slow-mo drama threshold for the slice (lower than the 50 default so the pawn capture still slow-mos).")]
+            public int SlowMoThreshold = 20;
             public ulong Seed = 0xF00DF00DUL;
         }
 
@@ -41,6 +43,7 @@ namespace CheckmateRoyale.Presentation
         public void Attack()
         {
             if (_fired || Context == null) return;
+            Context.Director.SlowMoThreshold = Polish.SlowMoThreshold; // slice showcases slow-mo on the impact
             _fired = Context.TryMakeMove(KnightFrom, PawnTarget, PieceType.Queen, Polish.EvalBefore, Polish.EvalAfter);
         }
 

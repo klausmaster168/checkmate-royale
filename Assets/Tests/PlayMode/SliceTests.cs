@@ -35,13 +35,14 @@ namespace CheckmateRoyale.Tests.PlayMode
             Assert.AreEqual(CC.Piece.WN, ctx.Game.Position.Board[36], "white knight should be on e5");
             Assert.IsNotNull(captured, "a ShotList should have been produced");
 
-            bool hasImpact = false, hasApproach = false;
+            bool hasImpact = false, hasApproach = false, impactSlowMo = false;
             foreach (Beat b in captured.Beats)
             {
-                if (b.Type == BeatType.Impact) hasImpact = true;
                 if (b.Type == BeatType.Approach) hasApproach = true;
+                if (b.Type == BeatType.Impact) { hasImpact = true; impactSlowMo = b.SlowMoFactor < 1f; }
             }
             Assert.IsTrue(hasApproach && hasImpact, "Cinema capture should have Approach + Impact beats");
+            Assert.IsTrue(impactSlowMo, "slice impact should be in slow-mo (lowered threshold)");
             Assert.That(captured.TotalDuration, Is.EqualTo(3.2f).Within(0.05f), "Cinema capture ~3.2s");
 
             string firstShot = Convert.ToBase64String(captured.ToBytes());

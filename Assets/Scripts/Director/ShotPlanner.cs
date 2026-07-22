@@ -14,7 +14,7 @@ namespace CheckmateRoyale.Director
         private const int AudioVariants = 4;
         private static readonly float[] SlowMoChoices = { 0.5f, 0.4f, 0.35f };
 
-        public static ShotList Plan(in DirectorInput input, in DramaScore drama, in MoveFacts facts, EscalationBudget budget, ModeDial dial)
+        public static ShotList Plan(in DirectorInput input, in DramaScore drama, in MoveFacts facts, EscalationBudget budget, ModeDial dial, int slowMoThreshold = 50)
         {
             ModeDial eff = ResolveDial(dial, input.Clock);
             var rng = MoveRandom.For(input.DirectorSeed, input.Ply);
@@ -22,7 +22,7 @@ namespace CheckmateRoyale.Director
 
             List<Beat> beats;
             if (facts.IsMate) beats = FinisherBeats(eff, drama.Score, available, ref rng);
-            else if (facts.IsCapture) beats = CaptureBeats(eff, drama.Score, available, ref rng);
+            else if (facts.IsCapture) beats = CaptureBeats(eff, drama.Score, available, ref rng, slowMoThreshold);
             else beats = QuietBeats(eff, ref rng);
 
             // A (non-mating) check gets a crane reveal — Cinema only.
@@ -53,10 +53,10 @@ namespace CheckmateRoyale.Director
 
         // ---- templates ----
 
-        private static List<Beat> CaptureBeats(ModeDial dial, int score, int available, ref Xoshiro256 rng)
+        private static List<Beat> CaptureBeats(ModeDial dial, int score, int available, ref Xoshiro256 rng, int slowMoThreshold)
         {
             var b = new List<Beat>(6);
-            bool slow = dial == ModeDial.Cinema && score >= 50 && available > 0;
+            bool slow = dial == ModeDial.Cinema && score >= slowMoThreshold && available > 0;
 
             switch (dial)
             {

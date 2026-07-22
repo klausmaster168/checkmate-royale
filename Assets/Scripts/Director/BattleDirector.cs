@@ -18,6 +18,9 @@ namespace CheckmateRoyale.Director
         public ModeDial Dial { get; set; }
         public EscalationBudget Budget { get; }
 
+        /// <summary>Drama score at/above which a Cinema capture spends a slow-mo token. Default 50.</summary>
+        public int SlowMoThreshold { get; set; } = 50;
+
         public BattleDirector(ulong seed, ModeDial dial = ModeDial.Cinema)
         {
             Seed = seed;
@@ -31,7 +34,7 @@ namespace CheckmateRoyale.Director
             MoveFacts facts = MoveFacts.From(input);
             NarrativeFacts nf = input.Memory.Evaluate(input.Move, input.Before, input.Ply);
             DramaScore drama = DramaScorer.Score(input, nf, facts);
-            return ShotPlanner.Plan(input, drama, facts, Budget, Dial);
+            return ShotPlanner.Plan(input, drama, facts, Budget, Dial, SlowMoThreshold);
         }
 
         /// <summary>Advance war memory and the escalation budget for a directed move. Call once.</summary>
