@@ -37,3 +37,4 @@ Tools/**/obj/
 unity-*.log
 test-results.xml
 UserSettings/
+playmode-results.xml
