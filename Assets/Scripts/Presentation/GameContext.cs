@@ -29,6 +29,13 @@ namespace CheckmateRoyale.Presentation
     public sealed class GameContext : MonoBehaviour
     {
         [SerializeField] private ulong _directorSeed = 0xC5EED12345678UL;
+        [SerializeField] private string _startFen = null; // null/empty => standard start position
+
+        public ulong Seed => _directorSeed;
+        public string StartFen { get => _startFen; set => _startFen = value; }
+
+        /// <summary>Set start position + seed before <see cref="Build"/> runs (call from Awake).</summary>
+        public void Configure(string fen, ulong seed) { _startFen = fen; _directorSeed = seed; }
 
         public GameState Game { get; private set; }
         public BattleDirector Director { get; private set; }
@@ -52,7 +59,7 @@ namespace CheckmateRoyale.Presentation
             if (_built) return;
             _built = true;
 
-            Game = new GameState();
+            Game = new GameState(string.IsNullOrWhiteSpace(_startFen) ? null : _startFen);
             Memory = new WarMemory();
             Memory.Init(Game.Position);
             Director = new BattleDirector(_directorSeed, ModeDial.Cinema);
@@ -105,6 +112,13 @@ namespace CheckmateRoyale.Presentation
         /// sequence for playback. Returns false if the move is illegal.
         /// </summary>
         public bool TryMakeMove(int from, int to, PieceType promotion = PieceType.Queen)
+            => TryMakeMove(from, to, promotion, null, null);
+
+        /// <summary>
+        /// As <see cref="TryMakeMove(int,int,PieceType)"/> but with injected engine evals
+        /// (centipawns from the mover's POV) — used by the vertical slice to force drama.
+        /// </summary>
+        public bool TryMakeMove(int from, int to, PieceType promotion, float? evalBefore, float? evalAfter)
         {
             if (!_built || Game.IsGameOver) return false;
 
@@ -116,7 +130,7 @@ namespace CheckmateRoyale.Presentation
             Game.MakeMove(move);
             Position after = Game.Position.Clone();
 
-            var input = new DirectorInput(move, before, after, null, null,
+            var input = new DirectorInput(move, before, after, evalBefore, evalAfter,
                                           ClockState.Untimed, Memory, Director.Seed, Game.PlyCount);
             ShotList shot = Director.Direct(input);
             Director.Commit(input, shot);
@@ -143,16 +157,20 @@ namespace CheckmateRoyale.Presentation
             return Move.Null;
         }
 
-        /// <summary>Restart from the initial position.</summary>
-        public void NewGame()
+        /// <summary>Restart from the configured start position, keeping the current seed.</summary>
+        public void NewGame() => ResetGame(_directorSeed);
+
+        /// <summary>Restart from the configured start position with a specific director seed.</summary>
+        public void ResetGame(ulong seed)
         {
+            _directorSeed = seed;
             Player.FlushInstant();
-            Game = new GameState();
+            Game = new GameState(string.IsNullOrWhiteSpace(_startFen) ? null : _startFen);
             Memory = new WarMemory();
             Memory.Init(Game.Position);
-            Director = new BattleDirector(_directorSeed, Director?.Dial ?? ModeDial.Cinema);
+            Director = new BattleDirector(seed, Director?.Dial ?? ModeDial.Cinema);
             Pieces.SpawnFromPosition(Game.Position);
-            Scars.Clear();
+            Scars?.Clear();
         }
     }
 }
