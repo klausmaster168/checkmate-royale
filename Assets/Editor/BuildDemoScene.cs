@@ -46,6 +46,13 @@ namespace CheckmateRoyale.Editor
             ctrl.Context = ctx;
             ctrl.Cam = cam;
 
+            // Play vs the built-in AI (you are White). Disable this component for hot-seat.
+            var aiGo = new GameObject("AiController");
+            var ai = aiGo.AddComponent<AiController>();
+            ai.Context = ctx;
+            ai.AiColor = CheckmateRoyale.ChessCore.Color.Black;
+            ai.Depth = 3;
+
             const string path = "Assets/Scenes/Demo_Board.unity";
             bool ok = EditorSceneManager.SaveScene(scene, path);
             Debug.Log($"[BuildDemoScene] saved {path} = {ok}");
