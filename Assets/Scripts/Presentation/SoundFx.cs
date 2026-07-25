@@ -9,6 +9,8 @@ namespace CheckmateRoyale.Presentation
     /// </summary>
     public sealed class SoundFx : MonoBehaviour
     {
+        public bool Muted = false;
+
         private GameContext _ctx;
         private AudioSource _src;
         private AudioClip _move, _capture, _check, _castle, _promo, _end;
@@ -45,10 +47,15 @@ namespace CheckmateRoyale.Presentation
                               : mc.Move.IsPromotion ? _promo
                               : _move;
             LastPrimary = primary.name;
-            _src.PlayOneShot(primary);
+            Play(primary);
 
-            if (_ctx.Game.InCheck) { PlayedCheck = true; _src.PlayOneShot(_check); }
-            if (_ctx.Game.IsGameOver) { PlayedEnd = true; _src.PlayOneShot(_end); }
+            if (_ctx.Game.InCheck) { PlayedCheck = true; Play(_check); }
+            if (_ctx.Game.IsGameOver) { PlayedEnd = true; Play(_end); }
+        }
+
+        private void Play(AudioClip clip)
+        {
+            if (!Muted && clip != null) _src.PlayOneShot(clip);
         }
 
         // A short percussive/tonal one-shot: sine tone blended with noise, exponentially decayed.

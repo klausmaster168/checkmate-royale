@@ -17,6 +17,7 @@ namespace CheckmateRoyale.Presentation
         private float _turnElapsed;
         private bool _running;
 
+        public bool Enabled = true; // false => casual, no clock
         public bool Flagged { get; private set; }
         public CC.Color FlaggedSide { get; private set; }
 
@@ -26,6 +27,13 @@ namespace CheckmateRoyale.Presentation
             _tc = tc;
             ResetClock();
             _ctx.MoveCommittedEvent += OnMove;
+        }
+
+        /// <summary>Switch time control and restart the clock.</summary>
+        public void SetTimeControl(CC.TimeControl tc)
+        {
+            _tc = tc;
+            ResetClock();
         }
 
         public void ResetClock()
@@ -61,7 +69,7 @@ namespace CheckmateRoyale.Presentation
         /// <summary>Advance the active side's clock by <paramref name="dt"/> seconds; flag if it runs out.</summary>
         public void Tick(float dt)
         {
-            if (!_running || _ctx == null || _ctx.Game == null || GameOver()) return;
+            if (!Enabled || !_running || _ctx == null || _ctx.Game == null || GameOver()) return;
             _turnElapsed += dt;
 
             CC.Color active = _ctx.Game.SideToMove;
@@ -77,6 +85,7 @@ namespace CheckmateRoyale.Presentation
 
         private void OnGUI()
         {
+            if (!Enabled) return;
             DrawClock(CC.Color.Black, 60f);
             DrawClock(CC.Color.White, 100f);
         }
