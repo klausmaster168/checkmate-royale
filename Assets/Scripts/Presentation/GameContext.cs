@@ -12,11 +12,12 @@ namespace CheckmateRoyale.Presentation
         public readonly Move Move;
         public readonly ShotList Shot;
         public readonly string Fen;
+        public readonly string San;
         public readonly PieceViewRegistry.MoveVisual Visual;
 
-        public MoveCommitted(Move move, ShotList shot, string fen, PieceViewRegistry.MoveVisual visual)
+        public MoveCommitted(Move move, ShotList shot, string fen, string san, PieceViewRegistry.MoveVisual visual)
         {
-            Move = move; Shot = shot; Fen = fen; Visual = visual;
+            Move = move; Shot = shot; Fen = fen; San = san; Visual = visual;
         }
     }
 
@@ -54,6 +55,7 @@ namespace CheckmateRoyale.Presentation
         public CameraDirector Cameras { get; private set; }
         public BoardHighlights Highlights { get; private set; }
         public ResultBanner EndBanner { get; private set; }
+        public MoveListPanel MoveList { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -103,6 +105,9 @@ namespace CheckmateRoyale.Presentation
             EndBanner = hlGo.AddComponent<ResultBanner>();
             EndBanner.Init(this);
 
+            MoveList = hlGo.AddComponent<MoveListPanel>();
+            MoveList.Init(this);
+
             Player.CaptureImpact += OnCaptureImpact;
 
             var camGo = new GameObject("CameraDirector");
@@ -143,6 +148,7 @@ namespace CheckmateRoyale.Presentation
 
             CheckmateRoyale.ChessCore.Color mover = Game.Position.SideToMove;
             Position before = Game.Position.Clone();
+            string san = Pgn.ToSan(before, move);
             Game.MakeMove(move);
             Position after = Game.Position.Clone();
 
@@ -152,7 +158,7 @@ namespace CheckmateRoyale.Presentation
             Director.Commit(input, shot);
 
             PieceViewRegistry.MoveVisual visual = Pieces.ApplyMove(move, mover);
-            var committed = new MoveCommitted(move, shot, Fen.ToFen(after), visual);
+            var committed = new MoveCommitted(move, shot, Fen.ToFen(after), san, visual);
 
             MoveCommittedEvent?.Invoke(committed);
             Player.Enqueue(committed);
@@ -190,6 +196,7 @@ namespace CheckmateRoyale.Presentation
             Pieces.SpawnFromPosition(Game.Position);
             Scars?.Clear();
             EndBanner?.Clear();
+            MoveList?.TrimTo(Game.PlyCount);
 
             if (Highlights != null)
             {
@@ -219,6 +226,7 @@ namespace CheckmateRoyale.Presentation
             Scars?.Clear();
             Highlights?.Clear();
             EndBanner?.Clear();
+            MoveList?.Clear();
         }
     }
 }
