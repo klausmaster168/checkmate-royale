@@ -31,20 +31,28 @@ namespace CheckmateRoyale.Tests.PlayMode
             Assert.Greater(whitePawn.transform.childCount, 0, "prefab-built pawn should wrap a model child");
             Assert.IsNotNull(whitePawn.GetComponent<BoxCollider>(), "prefab wrapper should have a picking collider");
 
-            // White knight on b1 (square 1) => no prefab assigned => primitive (no child).
+            // White knight on b1 (square 1) => no prefab assigned => procedural fallback (mesh on the root).
             PieceView whiteKnight = ctx.Pieces.At(1);
             Assert.IsNotNull(whiteKnight);
-            Assert.AreEqual(0, whiteKnight.transform.childCount, "unassigned knight should stay a primitive");
+            Assert.IsTrue(IsProceduralFallback(whiteKnight), "unassigned knight should use the procedural placeholder");
 
-            // Black pawn on a7 (square 48) => no black art => primitive.
+            // Black pawn on a7 (square 48) => no black art => procedural fallback.
             PieceView blackPawn = ctx.Pieces.At(48);
             Assert.IsNotNull(blackPawn);
-            Assert.AreEqual(0, blackPawn.transform.childCount, "black pawn should stay a primitive");
+            Assert.IsTrue(IsProceduralFallback(blackPawn), "black pawn should use the procedural placeholder");
 
             yield return null;
             Object.Destroy(ctxGo);
             Object.Destroy(template);
             Object.Destroy(art);
+        }
+
+        // A procedural placeholder builds its lathe mesh on the root (named "Chess_*");
+        // a prefab-built piece wraps the model as a child instead.
+        private static bool IsProceduralFallback(PieceView pv)
+        {
+            var mf = pv.GetComponent<MeshFilter>();
+            return mf != null && mf.sharedMesh != null && mf.sharedMesh.name.StartsWith("Chess_");
         }
     }
 }
