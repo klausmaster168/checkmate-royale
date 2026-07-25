@@ -8,7 +8,7 @@ namespace CheckmateRoyale.ChessCore
 
     public enum GameEndReason
     {
-        None, Checkmate, Stalemate, FiftyMove, ThreefoldRepetition, InsufficientMaterial
+        None, Checkmate, Stalemate, FiftyMove, ThreefoldRepetition, InsufficientMaterial, Timeout
     }
 
     /// <summary>

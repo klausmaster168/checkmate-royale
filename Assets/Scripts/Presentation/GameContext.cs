@@ -57,6 +57,7 @@ namespace CheckmateRoyale.Presentation
         public ResultBanner EndBanner { get; private set; }
         public MoveListPanel MoveList { get; private set; }
         public SoundFx Sound { get; private set; }
+        public ChessClock Clock { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -112,6 +113,9 @@ namespace CheckmateRoyale.Presentation
             Sound = hlGo.AddComponent<SoundFx>();
             Sound.Init(this);
 
+            Clock = hlGo.AddComponent<ChessClock>();
+            Clock.Init(this, CheckmateRoyale.ChessCore.TimeControl.Blitz3_2);
+
             Player.CaptureImpact += OnCaptureImpact;
 
             var camGo = new GameObject("CameraDirector");
@@ -146,6 +150,7 @@ namespace CheckmateRoyale.Presentation
         public bool TryMakeMove(int from, int to, PieceType promotion, float? evalBefore, float? evalAfter)
         {
             if (!_built || Game.IsGameOver) return false;
+            if (EndBanner != null && EndBanner.IsGameOver) return false; // e.g. flag fall
 
             Move move = FindLegal(from, to, promotion);
             if (move.IsNull) return false;
@@ -201,6 +206,7 @@ namespace CheckmateRoyale.Presentation
             Scars?.Clear();
             EndBanner?.Clear();
             MoveList?.TrimTo(Game.PlyCount);
+            Clock?.ResetClock();
 
             if (Highlights != null)
             {
@@ -231,6 +237,7 @@ namespace CheckmateRoyale.Presentation
             Highlights?.Clear();
             EndBanner?.Clear();
             MoveList?.Clear();
+            Clock?.ResetClock();
         }
     }
 }

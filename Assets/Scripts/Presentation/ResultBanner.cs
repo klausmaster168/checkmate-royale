@@ -38,6 +38,16 @@ namespace CheckmateRoyale.Presentation
             Message = "";
         }
 
+        /// <summary>Force a terminal result that isn't derivable from the position (e.g. a flag fall).</summary>
+        public void ForceResult(CC.GameResult result, CC.GameEndReason reason)
+        {
+            Result = result;
+            Reason = reason;
+            Message = reason == CC.GameEndReason.Timeout
+                ? $"Time — {(result == CC.GameResult.WhiteWins ? "White wins" : "Black wins")}"
+                : Describe(result, reason);
+        }
+
         public static string Describe(CC.GameResult result, CC.GameEndReason reason)
         {
             string outcome = result switch
