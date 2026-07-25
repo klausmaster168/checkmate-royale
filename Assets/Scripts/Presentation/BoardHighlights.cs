@@ -28,13 +28,28 @@ namespace CheckmateRoyale.Presentation
             _ctx.MoveCommittedEvent += OnMove;
         }
 
-        private void OnMove(MoveCommitted mc)
-        {
-            LastFrom = mc.Move.From;
-            LastTo = mc.Move.To;
-            Place(_from, LastFrom, 0.012f);
-            Place(_to, LastTo, 0.012f);
+        private void OnMove(MoveCommitted mc) => ShowLast(mc.Move.From, mc.Move.To);
 
+        /// <summary>Show the last-move tiles (from &lt; 0 hides them) and refresh the check tile.</summary>
+        public void ShowLast(int from, int to)
+        {
+            LastFrom = from;
+            LastTo = to;
+            if (from < 0)
+            {
+                _from.SetActive(false);
+                _to.SetActive(false);
+            }
+            else
+            {
+                Place(_from, from, 0.012f);
+                Place(_to, to, 0.012f);
+            }
+            UpdateCheck();
+        }
+
+        private void UpdateCheck()
+        {
             if (_ctx.Game.InCheck)
             {
                 CheckSquare = _ctx.Game.Position.KingSquare(_ctx.Game.SideToMove);

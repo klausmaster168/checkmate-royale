@@ -173,6 +173,36 @@ namespace CheckmateRoyale.Presentation
             return Move.Null;
         }
 
+        /// <summary>Take back up to <paramref name="plies"/> moves and re-sync the board. Returns plies undone.</summary>
+        public int Undo(int plies = 1)
+        {
+            if (!_built || plies <= 0 || Game.PlyCount == 0) return 0;
+
+            Player.FlushInstant();
+            int done = 0;
+            for (int i = 0; i < plies && Game.PlyCount > 0; i++) { Game.UnmakeLast(); done++; }
+            if (done == 0) return 0;
+
+            // Rebuild per-game state from the reverted position (kill history resets — fine for a takeback).
+            Memory = new WarMemory();
+            Memory.Init(Game.Position);
+            Director = new BattleDirector(_directorSeed, Director?.Dial ?? ModeDial.Cinema);
+            Pieces.SpawnFromPosition(Game.Position);
+            Scars?.Clear();
+            EndBanner?.Clear();
+
+            if (Highlights != null)
+            {
+                if (Game.PlyCount > 0)
+                {
+                    Move last = Game.MoveHistory[Game.PlyCount - 1];
+                    Highlights.ShowLast(last.From, last.To);
+                }
+                else Highlights.Clear();
+            }
+            return done;
+        }
+
         /// <summary>Restart from the configured start position, keeping the current seed.</summary>
         public void NewGame() => ResetGame(_directorSeed);
 

@@ -132,5 +132,29 @@ namespace CheckmateRoyale.Presentation
             _targets.Clear();
             _selected = -1;
         }
+
+        /// <summary>Take back the last move — a full pair (your move + the AI's reply) when playing vs the AI.</summary>
+        public void Undo()
+        {
+            if (Context == null) return;
+            ClearSelection();
+
+            int plies = 1;
+            var ai = FindFirstObjectByType<AiController>();
+            if (ai != null && ai.AiEnabled)
+            {
+                CC.Color human = ai.AiColor == CC.Color.White ? CC.Color.Black : CC.Color.White;
+                plies = Context.Game.SideToMove == human ? 2 : 1; // if it's your turn, revert your move + the reply
+            }
+            Context.Undo(plies);
+        }
+
+        private void OnGUI()
+        {
+            if (Context == null) return;
+            var style = new GUIStyle(GUI.skin.button) { fontSize = 15 };
+            if (GUI.Button(new Rect(20, 20, 110, 34), "⟲ Undo", style)) Undo();
+            if (GUI.Button(new Rect(138, 20, 120, 34), "New Game", style)) Context.NewGame();
+        }
     }
 }
