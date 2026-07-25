@@ -52,6 +52,7 @@ namespace CheckmateRoyale.Presentation
         public VFXSpawner Vfx { get; private set; }
         public BattleScars Scars { get; private set; }
         public CameraDirector Cameras { get; private set; }
+        public BoardHighlights Highlights { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -92,6 +93,11 @@ namespace CheckmateRoyale.Presentation
             Scars.Init(Board);
             Vfx.Prewarm(16);
             Scars.Prewarm(8);
+
+            var hlGo = new GameObject("Highlights");
+            hlGo.transform.SetParent(transform, false);
+            Highlights = hlGo.AddComponent<BoardHighlights>();
+            Highlights.Init(Board, this);
 
             Player.CaptureImpact += OnCaptureImpact;
 
@@ -177,6 +183,7 @@ namespace CheckmateRoyale.Presentation
             Director = new BattleDirector(seed, Director?.Dial ?? ModeDial.Cinema);
             Pieces.SpawnFromPosition(Game.Position);
             Scars?.Clear();
+            Highlights?.Clear();
         }
     }
 }

@@ -32,6 +32,11 @@ namespace CheckmateRoyale.Editor
             var ctx = ctxGo.AddComponent<GameContext>();
             ctx.Build();
 
+            // Play 1.e4 e5 2.Bc4 Nc6 3.Bxf7+ so the shot shows coordinates + last-move + check highlights.
+            ctx.TryMakeMove(12, 28); ctx.TryMakeMove(52, 36); ctx.TryMakeMove(5, 26);
+            ctx.TryMakeMove(57, 42); ctx.TryMakeMove(26, 53);
+            ctx.Player.FlushInstant();
+
             var camGo = new GameObject("CaptureCam");
             var cam = camGo.AddComponent<Camera>();
             cam.clearFlags = CameraClearFlags.SolidColor;

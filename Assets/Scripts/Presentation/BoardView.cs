@@ -57,6 +57,37 @@ namespace CheckmateRoyale.Presentation
                 tile.GetComponent<MeshRenderer>().sharedMaterial =
                     PlaceholderArt.Get(light ? PlaceholderArt.LightSquare : PlaceholderArt.DarkSquare);
             }
+
+            AddCoordinates();
+        }
+
+        private void AddCoordinates()
+        {
+            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (font == null) font = Font.CreateDynamicFontFromOSFont("Arial", 48);
+            var labelColor = new Color(0.72f, 0.74f, 0.80f);
+
+            for (int file = 0; file < 8; file++)
+                Label(((char)('a' + file)).ToString(), new Vector3((file - Offset) * SquareSize, 0.02f, -Offset * SquareSize - 0.7f), font, labelColor);
+            for (int rank = 0; rank < 8; rank++)
+                Label((rank + 1).ToString(), new Vector3(-Offset * SquareSize - 0.7f, 0.02f, (rank - Offset) * SquareSize), font, labelColor);
+        }
+
+        private void Label(string text, Vector3 localPos, Font font, Color color)
+        {
+            var go = new GameObject("Lbl_" + text);
+            go.transform.SetParent(transform, false);
+            go.transform.localPosition = localPos;
+            go.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); // lie flat, readable from above
+            var tm = go.AddComponent<TextMesh>();
+            tm.text = text;
+            tm.font = font;
+            tm.fontSize = 64;
+            tm.characterSize = 0.05f;
+            tm.anchor = TextAnchor.MiddleCenter;
+            tm.alignment = TextAlignment.Center;
+            tm.color = color;
+            go.GetComponent<MeshRenderer>().sharedMaterial = font.material;
         }
     }
 }
