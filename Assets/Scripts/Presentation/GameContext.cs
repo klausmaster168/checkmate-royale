@@ -53,6 +53,7 @@ namespace CheckmateRoyale.Presentation
         public BattleScars Scars { get; private set; }
         public CameraDirector Cameras { get; private set; }
         public BoardHighlights Highlights { get; private set; }
+        public ResultBanner EndBanner { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -98,6 +99,9 @@ namespace CheckmateRoyale.Presentation
             hlGo.transform.SetParent(transform, false);
             Highlights = hlGo.AddComponent<BoardHighlights>();
             Highlights.Init(Board, this);
+
+            EndBanner = hlGo.AddComponent<ResultBanner>();
+            EndBanner.Init(this);
 
             Player.CaptureImpact += OnCaptureImpact;
 
@@ -184,6 +188,7 @@ namespace CheckmateRoyale.Presentation
             Pieces.SpawnFromPosition(Game.Position);
             Scars?.Clear();
             Highlights?.Clear();
+            EndBanner?.Clear();
         }
     }
 }
