@@ -37,6 +37,7 @@ namespace CheckmateRoyale.Editor
             cam.fieldOfView = 42f;
             cam.transform.position = new Vector3(0f, 8.5f, -7.5f);
             cam.transform.rotation = Quaternion.Euler(52f, 0f, 0f);
+            camGo.AddComponent<AudioListener>(); // so procedural SoundFx is audible
 
             var ctxGo = new GameObject("GameContext");
             var ctx = ctxGo.AddComponent<GameContext>();

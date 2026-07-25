@@ -56,6 +56,7 @@ namespace CheckmateRoyale.Presentation
         public BoardHighlights Highlights { get; private set; }
         public ResultBanner EndBanner { get; private set; }
         public MoveListPanel MoveList { get; private set; }
+        public SoundFx Sound { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -107,6 +108,9 @@ namespace CheckmateRoyale.Presentation
 
             MoveList = hlGo.AddComponent<MoveListPanel>();
             MoveList.Init(this);
+
+            Sound = hlGo.AddComponent<SoundFx>();
+            Sound.Init(this);
 
             Player.CaptureImpact += OnCaptureImpact;
 
