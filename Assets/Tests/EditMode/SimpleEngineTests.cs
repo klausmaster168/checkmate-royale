@@ -52,5 +52,24 @@ namespace CheckmateRoyale.Tests.EditMode
             Move b = _engine.ChooseMove(pos, 3);
             Assert.That(b, Is.EqualTo(a), "same position must yield the same move");
         }
+
+        [Test]
+        public void Varied_TopN1_EqualsBest()
+        {
+            var pos = Fen.Parse(Fen.StartPos);
+            Assert.That(_engine.ChooseMoveVaried(pos, 3, 1), Is.EqualTo(_engine.ChooseMove(pos, 3)));
+        }
+
+        [Test]
+        public void Varied_ReturnsALegalMove()
+        {
+            var pos = Fen.Parse(Fen.StartPos);
+            Move m = _engine.ChooseMoveVaried(pos, 2, 3);
+            System.Span<Move> buf = stackalloc Move[MoveGenerator.MaxMoves];
+            int n = MoveGenerator.GenerateLegal(pos, buf);
+            bool legal = false;
+            for (int i = 0; i < n; i++) if (buf[i] == m) legal = true;
+            Assert.That(legal, Is.True);
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace CheckmateRoyale.Editor
             var ai = aiGo.AddComponent<AiController>();
             ai.Context = ctx;
             ai.AiColor = CheckmateRoyale.ChessCore.Color.Black;
-            ai.Depth = 3;
+            ai.Level = AiController.Difficulty.Medium;
 
             const string path = "Assets/Scenes/Demo_Board.unity";
             bool ok = EditorSceneManager.SaveScene(scene, path);
