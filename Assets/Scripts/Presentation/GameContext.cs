@@ -58,6 +58,7 @@ namespace CheckmateRoyale.Presentation
         public MoveListPanel MoveList { get; private set; }
         public SoundFx Sound { get; private set; }
         public ChessClock Clock { get; private set; }
+        public CapturedTray Captured { get; private set; }
 
         public event Action<MoveCommitted> MoveCommittedEvent;
 
@@ -115,6 +116,9 @@ namespace CheckmateRoyale.Presentation
 
             Clock = hlGo.AddComponent<ChessClock>();
             Clock.Init(this, CheckmateRoyale.ChessCore.TimeControl.Blitz3_2);
+
+            Captured = hlGo.AddComponent<CapturedTray>();
+            Captured.Context = this;
 
             Player.CaptureImpact += OnCaptureImpact;
 
